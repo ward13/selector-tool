@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!--  This file is 'selector-tool.html' (2025-10-10).                                 -->
+<!--  This file is 'selector-tool.html' (2025-10-26).                                 -->
 <!--                                                                                  -->
 <!--  'selector-tool.html' is free software: you can redistribute it and/or modify    -->
 <!--  it under the terms of the GNU General Public License as published by            -->
@@ -144,6 +144,7 @@
             opacity: 0.5;
             background-color: #cceeff;
         }
+
     </style>
 </head>
 <body>
@@ -262,8 +263,20 @@
 
             const updateSelectButtonState = () => {
                 noNamesLeft = poolList.children.length === 0;
+                noNamesDone = selectedList.children.length === 0;
                 const winNext = revealWindow.document.getElementById("winNext");
                 const winReset = revealWindow.document.getElementById("winReset");
+                const winTitle = revealWindow.document.getElementById("winTitle");
+
+                if (noNamesLeft && noNamesDone) {
+                    selectBtn.disabled = true;
+                    if (winNext !== null) {
+                        winNext.disabled = true;
+                        winNext.innerHTML = 'no names in pool';
+                        winTitle.innerHTML = "No Names in pool!!";
+                        }
+                    return;
+                }
 
                 if (noNamesLeft) {
                     selectBtn.disabled = true;
@@ -341,7 +354,7 @@
                         #winner-name { font-size: 2.5rem; font-weight: bold; color: #f1c40f; visibility: hidden; }
                     </style>
                     <div class="content">
-                        <h1>${revMess}</h1>
+                        <h1 id="winTitle">${revMess}</h1>
                         <div><button id="winNext" onclick="window.opener.selectRandomName()">Go</button></div>
                     </div>
                 `;
@@ -367,6 +380,11 @@
                 li.addEventListener('dragend', (e) => {
                     e.target.classList.remove('dragging');
                 });
+
+                li.addEventListener('dblclick', (e) =>{
+                    li.remove();
+                    updateSelectButtonState();
+                })
                 return li;
             };
 
@@ -387,6 +405,7 @@
                     }
                     updateSelectButtonState();
                 });
+
             };
 
             // --- Event Listeners ---
